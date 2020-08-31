@@ -11,7 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+//ParticipantsBusy : Checks if the participants are not RSVP in any other meeting during this time
 func ParticipantsBusy(thismeet Meeting) bool {
+	lock.Lock()
+	defer lock.Unlock()
 	collection := client.Database("appointy").Collection("meetings")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -23,7 +26,8 @@ func ParticipantsBusy(thismeet Meeting) bool {
 			thismeet.Endtime >= meet.Starttime {
 			for _, person := range meet.Participants {
 				for _, thisperson := range thismeet.Participants {
-					if thisperson == person {
+					if thisperson.Rsvp == "Yes" &&
+						thisperson == person {
 						return true
 					}
 				}

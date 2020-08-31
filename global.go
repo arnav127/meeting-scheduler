@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sync"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -8,6 +9,7 @@ import (
 )
 
 var client *mongo.Client
+var lock sync.Mutex
 
 //participant : Stores the details of a participant
 type participant struct {
