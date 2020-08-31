@@ -43,24 +43,15 @@ func (obj *Meeting) def() {
 		obj.Title = "Untitled Meeting"
 	}
 	if obj.Starttime == "" {
-		obj.Starttime = string(time.Now().Format("2006-01-02 15:04:05"))
+		obj.Starttime = string(time.Now().Format(time.RFC3339))
 	}
 	if obj.Endtime == "" {
-		obj.Endtime = string(time.Now().Local().Add(time.Hour * time.Duration(1)).Format("2006-01-02 15:04:05"))
+		obj.Endtime = string(time.Now().Local().Add(time.Hour * time.Duration(1)).Format(time.RFC3339))
 	}
 	if obj.Creationtime == "" {
-		obj.Creationtime = string(time.Now().Format("2006-01-02 15:04:05"))
+		obj.Creationtime = string(time.Now().Format(time.RFC3339))
 	}
 	for i := range obj.Participants {
 		obj.Participants[i].cons()
 	}
-}
-
-func iswithintime(meet Meeting) bool {
-	retval := false
-	if time.Now().Format("2006-01-02 15:04:05") >= meet.Starttime &&
-		time.Now().Format("2006-01-02 15:04:05") <= meet.Endtime {
-		retval = true
-	}
-	return retval
 }
