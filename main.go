@@ -14,7 +14,7 @@ func main() {
 	fmt.Println("Application Running")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	clientOptions := options.Client().ApplyURI("mongodb+srv://arnav:arnav0512@cluster0.l3dls.mongodb.net/<dbname>?retryWrites=true&w=majority")
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
 	client, _ = mongo.Connect(ctx, clientOptions)
 
 	http.HandleFunc("/meetings", MeetingHandler)
