@@ -23,6 +23,7 @@ func main() {
 	client, _ = mongo.Connect(ctx, clientOptions)
 
 	http.HandleFunc("/meetings", CreateMeeting)
+	http.HandleFunc("/articles/", GetParticipants)
 	// http.HandleFunc("/people", GetPersonEndpoint)
 	http.HandleFunc("/meeting/", GetMeeting)
 	http.ListenAndServe(":12345", nil)
