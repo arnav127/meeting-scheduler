@@ -13,8 +13,6 @@ import (
 
 //ParticipantsBusy : Checks if the participants are not RSVP in any other meeting during this time
 func ParticipantsBusy(thismeet Meeting) bool {
-	lock.Lock()
-	defer lock.Unlock()
 	collection := client.Database("appointy").Collection("meetings")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -43,20 +41,22 @@ func CreateMeeting(response http.ResponseWriter, request *http.Request) {
 	var meet Meeting
 	_ = json.NewDecoder(request.Body).Decode(&meet)
 	meet.def()
-	if ParticipantsBusy(meet) {
-		response.WriteHeader(http.StatusInternalServerError)
-		response.Write([]byte(`{ "message": "Participants RSVP clash" }`))
-		return
-	}
 	if meet.Starttime < meet.Creationtime {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{ "message": "Meeting cannot start in the past" }`))
+		return
+	}
+	lock.Lock()
+	if ParticipantsBusy(meet) {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "Participants RSVP clash" }`))
 		return
 	}
 	collection := client.Database("appointy").Collection("meetings")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	result, _ := collection.InsertOne(ctx, meet)
+	lock.Unlock()
 	meet.ID = result.InsertedID.(primitive.ObjectID)
 	json.NewEncoder(response).Encode(meet)
 	fmt.Println(meet)
