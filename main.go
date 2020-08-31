@@ -18,13 +18,14 @@ func GetMeetingEndpoint(response http.ResponseWriter, request *http.Request)    
 
 func main() {
 	fmt.Println("Starting the application...")
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	clientOptions := options.Client().ApplyURI("mongodb+srv://arnav:arnav0512@cluster0.l3dls.mongodb.net/<dbname>?retryWrites=true&w=majority")
 	client, _ = mongo.Connect(ctx, clientOptions)
 
-	http.HandleFunc("/meetings", CreateMeeting)
+	http.HandleFunc("/meetings", MeetingHandler)
 	http.HandleFunc("/articles/", GetParticipants)
 	// http.HandleFunc("/people", GetPersonEndpoint)
-	http.HandleFunc("/meeting/", GetMeeting)
+	http.HandleFunc("/meeting/", GetMeetingwithID)
 	http.ListenAndServe(":12345", nil)
 }

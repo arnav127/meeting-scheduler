@@ -10,8 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// GetParticipants : Returns a list of active meetings the person is a part of
-func GetParticipants(response http.ResponseWriter, request *http.Request) {
+//GetMeetingsinTime : Returns the meetings that are currently going on
+func GetMeetingsinTime(response http.ResponseWriter, request *http.Request) {
 	if request.Method == "GET" {
 		response.Header().Set("content-type", "application/json")
 		fmt.Println((request.URL.Query()["participant"][0]))
