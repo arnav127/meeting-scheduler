@@ -10,13 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-//GetMeetingwithTime : Gives the meeting with the provided id
-func GetMeetingwithTime(response http.ResponseWriter, request *http.Request) {
-	response.Header().Set("content-type", "application/json")
-	fmt.Println((request.URL.Query()["start"][0]))
-	fmt.Println((request.URL.Query()["end"][0]))
-	CheckstartTime := request.URL.Query()["start"][0]
-	CheckendTime := request.URL.Query()["end"][0]
+//CheckMeetingwithTime : Checks the meetings within the time
+func CheckMeetingwithTime(CheckStartTime string, CheckEndTime string) []Meeting {
 	collection := client.Database("appointy").Collection("meetings")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -25,10 +20,21 @@ func GetMeetingwithTime(response http.ResponseWriter, request *http.Request) {
 	var meet Meeting
 	for cursor.Next(ctx) {
 		cursor.Decode(&meet)
-		if (CheckstartTime <= meet.Starttime) && (CheckendTime >= meet.Endtime) {
+		if (CheckStartTime <= meet.Starttime) && (CheckEndTime >= meet.Endtime) {
 			meetingsreturn = append(meetingsreturn, meet)
 		}
 	}
-	json.NewEncoder(response).Encode(meetingsreturn)
+	return meetingsreturn
+}
+
+//GetMeetingwithTime : Gives the meetings within the time
+func GetMeetingwithTime(response http.ResponseWriter, request *http.Request) {
+	response.Header().Set("content-type", "application/json")
+	fmt.Println((request.URL.Query()["start"][0]))
+	fmt.Println((request.URL.Query()["end"][0]))
+	CheckStartTime := request.URL.Query()["start"][0]
+	CheckEndTime := request.URL.Query()["end"][0]
+	meetingswithtime := CheckMeetingwithTime(CheckStartTime, CheckEndTime)
+	json.NewEncoder(response).Encode(meetingswithtime)
 
 }

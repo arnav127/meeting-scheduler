@@ -8,6 +8,6 @@ func MeetingHandler(response http.ResponseWriter, request *http.Request) {
 		CreateMeeting(response, request)
 	}
 	if request.Method == "GET" {
-		GetMeetingwithID(response, request)
+		GetMeetingwithTime(response, request)
 	}
 }
