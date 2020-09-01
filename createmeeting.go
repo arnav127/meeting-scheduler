@@ -20,8 +20,8 @@ func ParticipantsBusy(thismeet Meeting) bool {
 	var meet Meeting
 	for cursor.Next(ctx) {
 		cursor.Decode(&meet)
-		if thismeet.Starttime <= meet.Endtime ||
-			thismeet.Endtime >= meet.Starttime {
+		if (thismeet.Starttime >= meet.Starttime && thismeet.Starttime <= meet.Endtime) ||
+			(thismeet.Endtime >= meet.Starttime && thismeet.Endtime <= meet.Endtime) {
 			for _, person := range meet.Participants {
 				for _, thisperson := range thismeet.Participants {
 					if thisperson.Rsvp == "Yes" &&
@@ -47,6 +47,7 @@ func CreateMeeting(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 	lock.Lock()
+	defer lock.Unlock()
 	if ParticipantsBusy(meet) {
 		response.WriteHeader(http.StatusInternalServerError)
 		response.Write([]byte(`{ "message": "Participants RSVP clash" }`))
@@ -56,7 +57,6 @@ func CreateMeeting(response http.ResponseWriter, request *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	result, _ := collection.InsertOne(ctx, meet)
-	lock.Unlock()
 	meet.ID = result.InsertedID.(primitive.ObjectID)
 	json.NewEncoder(response).Encode(meet)
 	fmt.Println(meet)
