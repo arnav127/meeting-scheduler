@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"path"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,8 +25,8 @@ func CheckMeetingwithID(id primitive.ObjectID) (Meeting, error) {
 func GetMeetingwithID(response http.ResponseWriter, request *http.Request) {
 	if request.Method == "GET" {
 		response.Header().Set("content-type", "application/json")
-		fmt.Println((request.URL.Query()["id"][0]))
-		id, _ := primitive.ObjectIDFromHex(request.URL.Query()["id"][0])
+		fmt.Println(path.Base(request.URL.Path))
+		id, _ := primitive.ObjectIDFromHex(path.Base(request.URL.Path))
 		meetingwithID, err := CheckMeetingwithID(id)
 		if err != nil {
 			response.WriteHeader(http.StatusInternalServerError)
