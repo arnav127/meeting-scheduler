@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"path"
@@ -18,6 +19,9 @@ func CheckMeetingwithID(id primitive.ObjectID) (Meeting, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	err := collection.FindOne(ctx, Meeting{ID: id}).Decode(&meet)
+	if meet.ID != id {
+		err = errors.New("400: Cannot find ID")
+	}
 	return meet, err
 }
 
