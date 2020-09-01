@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,6 +19,8 @@ func CheckMeetingwithTime(CheckStartTime string, CheckEndTime string) []Meeting 
 	defer cancel()
 	opts := options.Find()
 	opts.SetSort(bson.D{{"starttime", 1}})
+	opts.Skip = &skip
+	opts.Limit = &limit
 	filter := bson.D{
 		{"starttime", bson.M{"$gt": CheckStartTime}},
 		{"endtime", bson.M{"$lt": CheckEndTime}},
@@ -39,7 +42,14 @@ func GetMeetingwithTime(response http.ResponseWriter, request *http.Request) {
 	fmt.Println((request.URL.Query()["end"][0]))
 	CheckStartTime := request.URL.Query()["start"][0]
 	CheckEndTime := request.URL.Query()["end"][0]
+	if len(request.URL.Query()["limit"]) != 0 {
+		limit, _ = strconv.ParseInt(request.URL.Query()["limit"][0], 0, 64)
+	}
+	if len(request.URL.Query()["ofset"]) != 0 {
+		skip, _ = strconv.ParseInt(request.URL.Query()["ofset"][0], 0, 64)
+	}
 	meetingswithtime := CheckMeetingwithTime(CheckStartTime, CheckEndTime)
 	json.NewEncoder(response).Encode(meetingswithtime)
-
+	skip = 0
+	limit = 100
 }

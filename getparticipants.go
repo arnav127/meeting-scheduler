@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -18,6 +19,8 @@ func CheckParticipant(email string) []Meeting {
 	defer cancel()
 	opts := options.Find()
 	opts.SetSort(bson.D{{"starttime", 1}})
+	opts.Skip = &skip
+	opts.Limit = &limit
 	cursor, _ := collection.Find(ctx, bson.D{
 		{"participants.email", email},
 	}, opts)
@@ -35,8 +38,16 @@ func GetParticipants(response http.ResponseWriter, request *http.Request) {
 	if request.Method == "GET" {
 		response.Header().Set("content-type", "application/json")
 		fmt.Println((request.URL.Query()["participant"][0]))
+		if len(request.URL.Query()["limit"]) != 0 {
+			limit, _ = strconv.ParseInt(request.URL.Query()["limit"][0], 0, 64)
+		}
+		if len(request.URL.Query()["ofset"]) != 0 {
+			skip, _ = strconv.ParseInt(request.URL.Query()["ofset"][0], 0, 64)
+		}
 		email := request.URL.Query()["participant"][0]
 		participantmeetings := CheckParticipant(email)
 		json.NewEncoder(response).Encode(participantmeetings)
+		skip = 0
+		limit = 100
 	}
 }

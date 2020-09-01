@@ -10,6 +10,8 @@ import (
 
 var client *mongo.Client
 var lock sync.Mutex
+var skip = int64(0)
+var limit = int64(2)
 
 //participant : Stores the details of a participant
 type participant struct {
