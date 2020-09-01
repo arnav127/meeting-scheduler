@@ -18,11 +18,11 @@ func CheckParticipant(email string) []Meeting {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	opts := options.Find()
-	opts.SetSort(bson.D{{"starttime", 1}})
+	opts.SetSort(bson.D{{Key: "starttime", Value: 1}})
 	opts.Skip = &skip
 	opts.Limit = &limit
 	cursor, _ := collection.Find(ctx, bson.D{
-		{"participants.email", email},
+		{Key: "participants.email", Value: email},
 	}, opts)
 	var meetingsreturn []Meeting
 	var meet Meeting

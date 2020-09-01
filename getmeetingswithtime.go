@@ -18,12 +18,12 @@ func CheckMeetingwithTime(CheckStartTime string, CheckEndTime string) []Meeting 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	opts := options.Find()
-	opts.SetSort(bson.D{{"starttime", 1}})
+	opts.SetSort(bson.D{{Key: "starttime", Value: 1}})
 	opts.Skip = &skip
 	opts.Limit = &limit
 	filter := bson.D{
-		{"starttime", bson.M{"$gt": CheckStartTime}},
-		{"endtime", bson.M{"$lt": CheckEndTime}},
+		{Key: "starttime", Value: bson.M{"$gt": CheckStartTime}},
+		{Key: "endtime", Value: bson.M{"$lt": CheckEndTime}},
 	}
 	cursor, _ := collection.Find(ctx, filter, opts)
 	var meetingsreturn []Meeting
