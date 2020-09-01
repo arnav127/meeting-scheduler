@@ -50,6 +50,6 @@ func GetMeetingwithTime(response http.ResponseWriter, request *http.Request) {
 	}
 	meetingswithtime := CheckMeetingwithTime(CheckStartTime, CheckEndTime)
 	json.NewEncoder(response).Encode(meetingswithtime)
-	skip = 0
-	limit = 100
+	skip = Defaultskip
+	limit = Defaultlimit
 }

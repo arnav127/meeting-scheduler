@@ -10,8 +10,15 @@ import (
 
 var client *mongo.Client
 var lock sync.Mutex
-var skip = int64(0)
-var limit = int64(2)
+
+//Defaultskip : Stores the value of the default offset
+var Defaultskip = int64(0)
+
+//Defaultlimit : Stores the value of the default limit
+var Defaultlimit = int64(10)
+
+var skip = Defaultskip
+var limit = Defaultlimit
 
 //participant : Stores the details of a participant
 type participant struct {

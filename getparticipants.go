@@ -47,7 +47,7 @@ func GetParticipants(response http.ResponseWriter, request *http.Request) {
 		email := request.URL.Query()["participant"][0]
 		participantmeetings := CheckParticipant(email)
 		json.NewEncoder(response).Encode(participantmeetings)
-		skip = 0
-		limit = 100
+		skip = Defaultskip
+		limit = Defaultlimit
 	}
 }
