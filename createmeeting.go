@@ -37,32 +37,6 @@ func ParticipantsBusy(thismeet Meeting) bool {
 	return false
 }
 
-//ParticipantsBusy : Checks if the participants are not RSVP in any other meeting during this time
-// func ParticipantsBusy(thismeet Meeting) bool {
-// 	collection := client.Database("appointy").Collection("meetings")
-// 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
-// 	defer cancel()
-// 	for _, person := range thismeet.Participants {
-// 		cursor, _ := collection.Find(ctx, bson.M{"Participants.Email": person.Email})
-// 	}
-// 	var meet Meeting
-// 	for cursor.Next(ctx) {
-// 		cursor.Decode(&meet)
-// 		if (thismeet.Starttime >= meet.Starttime && thismeet.Starttime <= meet.Endtime) ||
-// 			(thismeet.Endtime >= meet.Starttime && thismeet.Endtime <= meet.Endtime) {
-// 			for _, person := range meet.Participants {
-// 				for _, thisperson := range thismeet.Participants {
-// 					if thisperson.Rsvp == "Yes" &&
-// 						thisperson == person {
-// 						return true
-// 					}
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return false
-// }
-
 //CreateMeeting : Adds another meeting to the database
 func CreateMeeting(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")

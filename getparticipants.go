@@ -10,15 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func iswithintime(meet Meeting) bool {
-	retval := false
-	if time.Now().Format(time.RFC3339) >= meet.Starttime &&
-		time.Now().Format(time.RFC3339) <= meet.Endtime {
-		retval = true
-	}
-	return retval
-}
-
 //CheckParticipant : Returns a list of active meetings of the person
 func CheckParticipant(email string) []Meeting {
 	collection := client.Database("appointy").Collection("meetings")
