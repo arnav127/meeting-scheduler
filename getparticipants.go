@@ -24,19 +24,12 @@ func CheckParticipant(email string) []Meeting {
 	collection := client.Database("appointy").Collection("meetings")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	cursor, _ := collection.Find(ctx, bson.M{})
+	cursor, _ := collection.Find(ctx, bson.M{"participants.email": email})
 	var meetingsreturn []Meeting
 	var meet Meeting
 	for cursor.Next(ctx) {
 		cursor.Decode(&meet)
-		if iswithintime(meet) {
-			for _, person := range meet.Participants {
-				if person.Email == email {
-					meetingsreturn = append(meetingsreturn, meet)
-					break
-				}
-			}
-		}
+		meetingsreturn = append(meetingsreturn, meet)
 	}
 	return meetingsreturn
 }

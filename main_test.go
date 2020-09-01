@@ -40,7 +40,7 @@ func BenchmarkMaingetpost(b *testing.B) {
 	var part participant
 	part.Name = "Arnav Dixit"
 	part.Email = "arnavdixit127@gmail.com"
-	part.Rsvp = "No"
+	part.Rsvp = "Yes"
 	message.Title = "Title"
 	message.Participants = append(message.Participants, part)
 	message.Starttime = "2021-09-01T09:52:12+05:30"
@@ -66,7 +66,7 @@ func BenchmarkParticipantsBusy(b *testing.B) {
 	var part participant
 	part.Name = "Arnav Dixit"
 	part.Email = "arnavdixit127@gmail.com"
-	part.Rsvp = "No"
+	part.Rsvp = "Yes"
 	message.Title = "Title"
 	message.Participants = append(message.Participants, part)
 	message.Starttime = "2021-09-01T09:52:12+05:30"
@@ -77,5 +77,15 @@ func BenchmarkParticipantsBusy(b *testing.B) {
 	client, _ = mongo.Connect(ctx, clientOptions)
 	for n := 0; n < b.N; n++ {
 		ParticipantsBusy(message)
+	}
+}
+
+func BenchmarkCheckParticipant(b *testing.B) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017/")
+	client, _ = mongo.Connect(ctx, clientOptions)
+	for n := 0; n < b.N; n++ {
+		_ = CheckParticipant("arnavdixit127@gmail.com")
 	}
 }
