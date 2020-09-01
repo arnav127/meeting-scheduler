@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 //CheckParticipant : Returns a list of active meetings of the person
@@ -15,7 +16,11 @@ func CheckParticipant(email string) []Meeting {
 	collection := client.Database("appointy").Collection("meetings")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	cursor, _ := collection.Find(ctx, bson.M{"participants.email": email})
+	opts := options.Find()
+	opts.SetSort(bson.D{{"starttime", 1}})
+	cursor, _ := collection.Find(ctx, bson.D{
+		{"participants.email", email},
+	}, opts)
 	var meetingsreturn []Meeting
 	var meet Meeting
 	for cursor.Next(ctx) {

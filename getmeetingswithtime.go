@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 //CheckMeetingwithTime : Returns the meetings within the time
@@ -15,11 +16,13 @@ func CheckMeetingwithTime(CheckStartTime string, CheckEndTime string) []Meeting 
 	collection := client.Database("appointy").Collection("meetings")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	filter := bson.M{
-		"starttime": bson.M{"$gt": CheckStartTime},
-		"endtime":   bson.M{"$lt": CheckEndTime},
+	opts := options.Find()
+	opts.SetSort(bson.D{{"starttime", 1}})
+	filter := bson.D{
+		{"starttime", bson.M{"$gt": CheckStartTime}},
+		{"endtime", bson.M{"$lt": CheckEndTime}},
 	}
-	cursor, _ := collection.Find(ctx, filter)
+	cursor, _ := collection.Find(ctx, filter, opts)
 	var meetingsreturn []Meeting
 	var meet Meeting
 	for cursor.Next(ctx) {

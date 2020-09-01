@@ -27,8 +27,9 @@ func ParticipantsBusy(thismeet Meeting) bool {
 			cursor, _ := collection.Find(ctx, filter)
 			for cursor.Next(ctx) {
 				cursor.Decode(&meet)
+				fmt.Println(meet, thismeet)
 				if (thismeet.Starttime >= meet.Starttime && thismeet.Starttime <= meet.Endtime) ||
-					(thismeet.Endtime >= meet.Starttime && thismeet.Endtime <= thismeet.Endtime) {
+					(thismeet.Endtime >= meet.Starttime && thismeet.Endtime <= meet.Endtime) {
 					return true
 				}
 			}
