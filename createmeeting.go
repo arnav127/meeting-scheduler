@@ -49,6 +49,11 @@ func CreateMeeting(response http.ResponseWriter, request *http.Request) {
 		response.Write([]byte(`{ "message": "Meeting cannot start in the past" }`))
 		return
 	}
+	if meet.Starttime > meet.Endtime {
+		response.WriteHeader(http.StatusInternalServerError)
+		response.Write([]byte(`{ "message": "Invalid time" }`))
+		return
+	}
 	lock.Lock()
 	defer lock.Unlock()
 	if ParticipantsBusy(meet) {
