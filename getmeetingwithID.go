@@ -20,7 +20,7 @@ func CheckMeetingwithID(id primitive.ObjectID) (Meeting, error) {
 	defer cancel()
 	err := collection.FindOne(ctx, Meeting{ID: id}).Decode(&meet)
 	if meet.ID != id {
-		err = errors.New("400: Cannot find ID")
+		err = errors.New("Error 400: ID not present")
 	}
 	return meet, err
 }
@@ -33,7 +33,7 @@ func GetMeetingwithID(response http.ResponseWriter, request *http.Request) {
 		id, _ := primitive.ObjectIDFromHex(path.Base(request.URL.Path))
 		meetingwithID, err := CheckMeetingwithID(id)
 		if err != nil {
-			response.WriteHeader(http.StatusInternalServerError)
+			response.WriteHeader(http.StatusBadRequest)
 			response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
 			return
 		}

@@ -46,6 +46,11 @@ func GetParticipants(response http.ResponseWriter, request *http.Request) {
 		}
 		email := request.URL.Query()["participant"][0]
 		participantmeetings := CheckParticipant(email)
+		if len(participantmeetings) == 0 {
+			response.WriteHeader(http.StatusBadRequest)
+			response.Write([]byte(`{ "message": "Participant not present" }`))
+			return
+		}
 		json.NewEncoder(response).Encode(participantmeetings)
 		skip = Defaultskip
 		limit = Defaultlimit

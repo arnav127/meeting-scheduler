@@ -46,12 +46,12 @@ func CreateMeeting(response http.ResponseWriter, request *http.Request) {
 	_ = json.NewDecoder(request.Body).Decode(&meet)
 	meet.def()
 	if meet.Starttime < meet.Creationtime {
-		response.WriteHeader(http.StatusInternalServerError)
+		response.WriteHeader(http.StatusBadRequest)
 		response.Write([]byte(`{ "message": "Meeting cannot start in the past" }`))
 		return
 	}
 	if meet.Starttime > meet.Endtime {
-		response.WriteHeader(http.StatusInternalServerError)
+		response.WriteHeader(http.StatusBadRequest)
 		response.Write([]byte(`{ "message": "Invalid time" }`))
 		return
 	}
@@ -59,7 +59,7 @@ func CreateMeeting(response http.ResponseWriter, request *http.Request) {
 	defer lock.Unlock()
 	err := ParticipantsBusy(meet)
 	if err != nil {
-		response.WriteHeader(http.StatusInternalServerError)
+		response.WriteHeader(http.StatusBadRequest)
 		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
 		return
 	}
