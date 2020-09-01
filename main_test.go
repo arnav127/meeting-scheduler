@@ -62,7 +62,7 @@ func TestMaingetmeetintime(t *testing.T) {
 
 func BenchmarkMaingetmeet(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		http.Get("http://localhost:12345/meeting/?id=5f4dcc74fa1a4b2011daf69a")
+		http.Get("http://localhost:12345/meeting/5f4dcc74fa1a4b2011daf69a")
 	}
 }
 
@@ -72,12 +72,18 @@ func BenchmarkMaingetparticipant(b *testing.B) {
 	}
 }
 
+func BenchmarkMaingettime(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		http.Get("http://localhost:12345/meetings?start=2019-09-01T13:30:10+05:30&end=2021-09-01T14:30:10+05:30")
+	}
+}
+
 func BenchmarkMaingetpost(b *testing.B) {
 	var message Meeting
 	var part participant
 	part.Name = "Arnav Dixit"
 	part.Email = "arnavdixit127@gmail.com"
-	part.Rsvp = "Yes"
+	part.Rsvp = "No"
 	message.Title = "Title"
 	message.Participants = append(message.Participants, part)
 	message.Starttime = "2021-09-01T09:52:12+05:30"
@@ -87,6 +93,7 @@ func BenchmarkMaingetpost(b *testing.B) {
 	if err != nil {
 		fmt.Println("Error")
 	}
+
 	for n := 0; n < b.N; n++ {
 		resp, err := http.Post("http://localhost:12345/meetings", "application/json", bytes.NewBuffer(bytesRepresentation))
 		if err != nil {
@@ -103,7 +110,7 @@ func BenchmarkParticipantsBusy(b *testing.B) {
 	var part participant
 	part.Name = "Arnav Dixit"
 	part.Email = "arnavdixit127@gmail.com"
-	part.Rsvp = "Yes"
+	part.Rsvp = "No"
 	message.Title = "Title"
 	message.Participants = append(message.Participants, part)
 	message.Starttime = "2021-09-01T09:52:12+05:30"
