@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -12,7 +13,7 @@ import (
 )
 
 //ParticipantsBusy : Checks if the participants are not RSVP in any other meeting during this time
-func ParticipantsBusy(thismeet Meeting) bool {
+func ParticipantsBusy(thismeet Meeting) error {
 	collection := client.Database("appointy").Collection("meetings")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -27,15 +28,15 @@ func ParticipantsBusy(thismeet Meeting) bool {
 			cursor, _ := collection.Find(ctx, filter)
 			for cursor.Next(ctx) {
 				cursor.Decode(&meet)
-				fmt.Println(meet, thismeet)
 				if (thismeet.Starttime >= meet.Starttime && thismeet.Starttime <= meet.Endtime) ||
 					(thismeet.Endtime >= meet.Starttime && thismeet.Endtime <= meet.Endtime) {
-					return true
+					returnerror := "Error 400: Participant " + thisperson.Name + " RSVP Clash"
+					return errors.New(returnerror)
 				}
 			}
 		}
 	}
-	return false
+	return nil
 }
 
 //CreateMeeting : Adds another meeting to the database
@@ -56,9 +57,10 @@ func CreateMeeting(response http.ResponseWriter, request *http.Request) {
 	}
 	lock.Lock()
 	defer lock.Unlock()
-	if ParticipantsBusy(meet) {
+	err := ParticipantsBusy(meet)
+	if err != nil {
 		response.WriteHeader(http.StatusInternalServerError)
-		response.Write([]byte(`{ "message": "Participants RSVP clash" }`))
+		response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
 		return
 	}
 	collection := client.Database("appointy").Collection("meetings")
