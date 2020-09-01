@@ -46,7 +46,7 @@ func GetMeetingwithTime(response http.ResponseWriter, request *http.Request) {
 		limit, _ = strconv.ParseInt(request.URL.Query()["limit"][0], 0, 64)
 	}
 	if len(request.URL.Query()["ofset"]) != 0 {
-		skip, _ = strconv.ParseInt(request.URL.Query()["ofset"][0], 0, 64)
+		skip, _ = strconv.ParseInt(request.URL.Query()["offset"][0], 0, 64)
 	}
 	meetingswithtime := CheckMeetingwithTime(CheckStartTime, CheckEndTime)
 	json.NewEncoder(response).Encode(meetingswithtime)
