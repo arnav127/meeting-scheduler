@@ -1,3 +1,4 @@
+<code><p align="center"><img height="200" src="images/icon_transparent.png" ></p></code>
 # Meeting Scheduler  [![Go Report Card](https://goreportcard.com/badge/arnav127/meeting-scheduler)](https://goreportcard.com/report/arnav127/meeting-scheduler) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/gojp/goreportcard/blob/master/LICENSE)
 Meeting Scheduler is a basic version of HTTP JSON API written in Golang and works on the port 12345 by default.
 
