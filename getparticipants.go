@@ -35,24 +35,27 @@ func CheckParticipant(email string) []Meeting {
 
 // GetParticipants : Gets a list of active meetings of the person
 func GetParticipants(response http.ResponseWriter, request *http.Request) {
-	if request.Method == "GET" {
-		response.Header().Set("content-type", "application/json")
-		fmt.Println((request.URL.Query()["participant"][0]))
-		if len(request.URL.Query()["limit"]) != 0 {
-			limit, _ = strconv.ParseInt(request.URL.Query()["limit"][0], 0, 64)
-		}
-		if len(request.URL.Query()["ofset"]) != 0 {
-			skip, _ = strconv.ParseInt(request.URL.Query()["offset"][0], 0, 64)
-		}
-		email := request.URL.Query()["participant"][0]
-		participantmeetings := CheckParticipant(email)
-		if len(participantmeetings) == 0 {
-			response.WriteHeader(http.StatusBadRequest)
-			response.Write([]byte(`{ "message": "Participant not present" }`))
-			return
-		}
-		json.NewEncoder(response).Encode(participantmeetings)
-		skip = Defaultskip
-		limit = Defaultlimit
+	if request.Method != "GET" {
+		response.WriteHeader(http.StatusMethodNotAllowed)
+		response.Write([]byte(`{ "message": "Incorrect Method" }`))
+		return
 	}
+	response.Header().Set("content-type", "application/json")
+	fmt.Println((request.URL.Query()["participant"][0]))
+	if len(request.URL.Query()["limit"]) != 0 {
+		limit, _ = strconv.ParseInt(request.URL.Query()["limit"][0], 0, 64)
+	}
+	if len(request.URL.Query()["ofset"]) != 0 {
+		skip, _ = strconv.ParseInt(request.URL.Query()["offset"][0], 0, 64)
+	}
+	email := request.URL.Query()["participant"][0]
+	participantmeetings := CheckParticipant(email)
+	if len(participantmeetings) == 0 {
+		response.WriteHeader(http.StatusBadRequest)
+		response.Write([]byte(`{ "message": "Participant not present" }`))
+		return
+	}
+	json.NewEncoder(response).Encode(participantmeetings)
+	skip = Defaultskip
+	limit = Defaultlimit
 }
